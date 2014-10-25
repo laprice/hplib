@@ -48,7 +48,7 @@ class MailboxClient(HpApiClient):
         super(MailboxClient,self).__init__()
         self.root_url = 'https://spokane-efd.cloudpublish.com/mbs'
         self.base_headers = { 'X-API-KEY': self.key, 'Content-Type': 'application/json'}
-        self.mbs = self.get(root_url)
+        self.mbs = self.get(self.root_url)
 
     def get(self, url):
         response = requests.get( url, headers=self.base_headers )
