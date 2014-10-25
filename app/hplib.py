@@ -6,6 +6,7 @@ import os
 import json
 import pprint
 
+
 #quick and dirty API client for the hp publishing platform APIs
 api_username = os.environ.get('HP_API_USER')
 api_key = os.environ.get('HP_API_KEY')
@@ -15,7 +16,6 @@ class HpApiClient(object):
         self.username = api_username
         self.key = api_key
         
-
 class PublicationsClient(HpApiClient):
     def __init__(self):
         super(PublicationsClient,self ).__init__()
@@ -37,7 +37,7 @@ class MarketingClient(HpApiClient):
         self.base_headers = { 'api-auth-token': api_key, 'Content-Type': 'application/json' }
 
     def get(self):
-        response = requests.get( self.root_url + '/consumers', headers=self.base_headers )
+        response = requests.get( self.root_url + '/catalogviews', headers=self.base_headers )
         if response.status_code != 200:
             print("error %s" % response.status_code)
         else:
@@ -56,13 +56,20 @@ class MailboxClient(HpApiClient):
         else:
             return response.json()
 
+    def 
+
 if __name__=='__main__':
     pubs = PublicationsClient()
+    print(pubs.root_url)
     pprint.pprint(pubs.get())
+
     market = MarketingClient()
+    print(market.root_url)
     print(market.base_headers)
     pprint.pprint(market.get())
+
     mbs = MailboxClient()
+    print(mbs.root_url)
     print(mbs.base_headers)
     pprint.pprint(mbs.get())
 
