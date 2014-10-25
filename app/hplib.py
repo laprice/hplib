@@ -71,12 +71,14 @@ class MailboxClient(HpApiClient):
         response = requests.post( url,
                                   headers=self.base_headers,
                                   json=userspec)
-        print(response.status_code)
         if response.status_code == 201:
             self.mailboxes[userspec['userId']] = response.json()
             return response.json()
         elif response.status_code == 400:
-            return self.mailboxes[userspec['userId']]
+            if self.mailboxes.has_key(userspec['userId']):
+                return self.mailboxes[userspec['userId']]
+            else:
+                return requests.get(url, headers=self.base_headers).json()
 
 
 if __name__=='__main__':
