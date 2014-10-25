@@ -44,7 +44,8 @@ class MarketingClient(HpApiClient):
             return response.json()
 
 class MailboxClient(HpApiClient):
-    """Handles Creation and access to Mailboxes.
+    """
+    Handles Creation and access to Mailboxes.
     Responsible for creating mailboxes.
     Responsible for Looking for Mailboxes for a given user.
     """
@@ -53,6 +54,7 @@ class MailboxClient(HpApiClient):
         self.root_url = 'https://spokane-efd.cloudpublish.com/mbs'
         self.base_headers = { 'X-API-KEY': self.key, 'Content-Type': 'application/json'}
         self.mbs = self.get(self.root_url)
+        self.mailboxes = {}
 
     def get(self, url):
         response = requests.get( url, headers=self.base_headers )
@@ -69,8 +71,12 @@ class MailboxClient(HpApiClient):
         response = requests.post( url,
                                   headers=self.base_headers,
                                   json=userspec)
-        
-        return response.json()
+        print(response.status_code)
+        if response.status_code == 201:
+            self.mailboxes[userspec['userId']] = response.json()
+            return response.json()
+        elif response.status_code == 400:
+            return self.mailboxes[userspec['userId']]
 
 
 if __name__=='__main__':
