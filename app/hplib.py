@@ -76,15 +76,42 @@ class MailboxClient(HpApiClient):
             return response.json()
         elif response.status_code == 400:
             if not self.mailboxes.has_key(userspec['userId']):
-            self.mailboxes[userspec['userId']] = requests.get(url, 
-                                                              headers=self.base_headers
-            ).json()
+                self.mailboxes[userspec['userId']] = requests.get(url, headers=self.base_headers).json()
         return self.mailboxes[userspec['userId']]
 
-    def get_user_mailbox(self, userid, domain):
-        url = uritemplate.expand(self.mbs['mailboxUsersUrlTemplate'], 
-                                 { 'userId': userid, 'userDomain': domain })
-        return requests.get(url, headers=self.base_headers).json()
+    def user_url(self, userspec):
+        return uritemplate.expand(self.mbs['mailboxUsersUrlTemplate'], userspec)
+
+    def get_user_mailbox(self, userspec):
+        return requests.get(self.user_url(userspec), headers=self.base_headers).json()
+
+    def get_user_items(self, userspec):
+        url = self.mailboxes[userspec['userId']]['itemsUrl']
+        return requests.get(url, self.base_headers).json()
+
+    def add_user_item(self, userspec, item):
+        """
+        item = {
+        "title": "Cycling Today, May Edition",
+        "contentUrl": "http://cyclingtoday.com/2014/04.pdf",
+        "senderName", "Cycling Today"
+        }
+        """
+        url = self.mailboxes[userspec['userId']]['itemsUrl']
+        response = requests.post(self.user_url(userspec),
+                                 headers=self.base_headers,
+                                 json=item)
+        if response.status_code != 201:
+            print("error adding item %s" % response.status_code)
+        else:
+            return response.json()
+
+    def add_user_gcp(self, userspec, return_url):
+        pass
+    
+    def deliver_to_mailbox(self, userspec, filename):
+        pass
+
 
 if __name__=='__main__':
     # pubs = PublicationsClient()
@@ -101,6 +128,7 @@ if __name__=='__main__':
     print(mbs.base_headers)
     pprint.pprint(mbs.mbs)
     pprint.pprint(mbs.permissions())
-    pprint.pprint(mbs.create_mailbox({ 'userId': 'hpux@example.com', 
-                                       'userDomain': 'lurch'}))
-    
+    userspec = { 'userId': 'hpux@example.com', 'userDomain': 'lurch'}
+    pprint.pprint(mbs.create_mailbox(userspec))
+    pprint.pprint(mbs.get_user_mailbox(userspec))
+    pprint.pprint(mbs.get_user_items(userspec))
