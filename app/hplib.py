@@ -65,13 +65,13 @@ class MailboxClient(HpApiClient):
         return self.get( self.mbs['permissionsUrl'])
 
     def create_mailbox(self, userspec):
-        response = requests.post( self.mbs['mailboxesUrl'],
+        url = uritemplate.expand(self.mbs['mailboxUsersUrlTemplate'], userspec)
+        response = requests.post( url,
                                   headers=self.base_headers,
                                   json=userspec)
         
-        return response
+        return response.json()
 
-    def add_o
 
 if __name__=='__main__':
     # pubs = PublicationsClient()
@@ -88,6 +88,6 @@ if __name__=='__main__':
     print(mbs.base_headers)
     pprint.pprint(mbs.mbs)
     pprint.pprint(mbs.permissions())
-    pprint.pprint(mbs.create_mailbox({ 'username': 'hpux@example.com', 
-                                       'domain': 'lurch'}))
+    pprint.pprint(mbs.create_mailbox({ 'userId': 'hpux@example.com', 
+                                       'userDomain': 'lurch'}))
     
