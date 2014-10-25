@@ -44,6 +44,10 @@ class MarketingClient(HpApiClient):
             return response.json()
 
 class MailboxClient(HpApiClient):
+    """Handles Creation and access to Mailboxes.
+    Responsible for creating mailboxes.
+    Responsible for Looking for Mailboxes for a given user.
+    """
     def __init__(self):
         super(MailboxClient,self).__init__()
         self.root_url = 'https://spokane-efd.cloudpublish.com/mbs'
@@ -60,24 +64,30 @@ class MailboxClient(HpApiClient):
     def permissions(self):
         return self.get( self.mbs['permissionsUrl'])
 
-    def mailboxes(self):
-        return self.get( self.mbs['mailboxesUrl'])
+    def create_mailbox(self, userspec):
+        response = requests.post( self.mbs['mailboxesUrl'],
+                                  headers=self.base_headers,
+                                  json=userspec)
+        
+        return response
 
+    def add_o
 
 if __name__=='__main__':
-    pubs = PublicationsClient()
-    print(pubs.root_url)
-    pprint.pprint(pubs.get())
+    # pubs = PublicationsClient()
+    # print(pubs.root_url)
+    # pprint.pprint(pubs.get())
 
-    market = MarketingClient()
-    print(market.root_url)
-    print(market.base_headers)
-    pprint.pprint(market.get())
-
+    # market = MarketingClient()
+    # print(market.root_url)
+    # print(market.base_headers)
+    # pprint.pprint(market.get())
+    
     mbs = MailboxClient()
     print(mbs.root_url)
     print(mbs.base_headers)
     pprint.pprint(mbs.mbs)
     pprint.pprint(mbs.permissions())
-    pprint.pprint(mbs.mailboxes())
+    pprint.pprint(mbs.create_mailbox({ 'username': 'hpux@example.com', 
+                                       'domain': 'lurch'}))
     
