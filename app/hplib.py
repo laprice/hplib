@@ -75,11 +75,11 @@ class MailboxClient(HpApiClient):
             self.mailboxes[userspec['userId']] = response.json()
             return response.json()
         elif response.status_code == 400:
-            if self.mailboxes.has_key(userspec['userId']):
-                return self.mailboxes[userspec['userId']]
-            else:
-                return requests.get(url, headers=self.base_headers).json()
-
+            if not self.mailboxes.has_key(userspec['userId']):
+            self.mailboxes[userspec['userId']] = requests.get(url, 
+                                                              headers=self.base_headers
+            ).json()
+        return self.mailboxes[userspec['userId']]
 
 if __name__=='__main__':
     # pubs = PublicationsClient()
