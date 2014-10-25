@@ -46,24 +46,23 @@ class MarketingClient(HpApiClient):
 class MailboxClient(HpApiClient):
     def __init__(self):
         super(MailboxClient,self).__init__()
-        self.root_url = 'https://spokane-efd.cloudpublish.com/'
+        self.root_url = 'https://spokane-efd.cloudpublish.com/mbs'
         self.base_headers = { 'X-API-KEY': self.key, 'Content-Type': 'application/json'}
-        self.mbs = self.get()
+        self.mbs = self.get(root_url)
 
-    def get(self):
-        response = requests.get( self.root_url + 'mbs', headers=self.base_headers )
+    def get(self, url):
+        response = requests.get( url, headers=self.base_headers )
         if response.status_code != 200:
             print("error %s" % response.status_code)
         else:
             return response.json()
 
     def permissions(self):
-        response = requests.get( self.root_url + 'mbs/permissions',
-                                 headers=self.base_headers )
-        if response.status_code != 200:
-            print("error %s" % response.status_code)
-        else:
-            return response.json()
+        return self.get( self.mbs['permissionsUrl'])
+
+    def mailboxes(self):
+        return self.get( self.mbs['mailboxesUrl'])
+
 
 if __name__=='__main__':
     pubs = PublicationsClient()
@@ -78,5 +77,7 @@ if __name__=='__main__':
     mbs = MailboxClient()
     print(mbs.root_url)
     print(mbs.base_headers)
-    pprint.pprint(mbs.get())
-
+    pprint.pprint(mbs.mbs)
+    pprint.pprint(mbs.permissions())
+    pprint.pprint(mbs.mailboxes())
+    
