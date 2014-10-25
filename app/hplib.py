@@ -5,7 +5,7 @@ import requests
 import os
 import json
 import pprint
-
+import uritemplate
 
 #quick and dirty API client for the hp publishing platform APIs
 api_username = os.environ.get('HP_API_USER')
@@ -48,6 +48,7 @@ class MailboxClient(HpApiClient):
         super(MailboxClient,self).__init__()
         self.root_url = 'https://spokane-efd.cloudpublish.com/'
         self.base_headers = { 'X-API-KEY': self.key, 'Content-Type': 'application/json'}
+        self.mbs = self.get()
 
     def get(self):
         response = requests.get( self.root_url + 'mbs', headers=self.base_headers )
@@ -56,7 +57,13 @@ class MailboxClient(HpApiClient):
         else:
             return response.json()
 
-    def 
+    def permissions(self):
+        response = requests.get( self.root_url + 'mbs/permissions',
+                                 headers=self.base_headers )
+        if response.status_code != 200:
+            print("error %s" % response.status_code)
+        else:
+            return response.json()
 
 if __name__=='__main__':
     pubs = PublicationsClient()
