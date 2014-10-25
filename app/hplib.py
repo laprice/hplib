@@ -81,6 +81,11 @@ class MailboxClient(HpApiClient):
             ).json()
         return self.mailboxes[userspec['userId']]
 
+    def get_user_mailbox(self, userid, domain):
+        url = uritemplate.expand(self.mbs['mailboxUsersUrlTemplate'], 
+                                 { 'userId': userid, 'userDomain': domain })
+        return requests.get(url, headers=self.base_headers).json()
+
 if __name__=='__main__':
     # pubs = PublicationsClient()
     # print(pubs.root_url)
